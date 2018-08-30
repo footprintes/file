@@ -81,6 +81,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     public ResponseResult uploadFileSingle(FileInfoBO fileInfoBO,Integer type) {
         //获取当前的系统语言
         Locale locale = LocaleContextHolder.getLocale();
+        FileTransferUtils fileTransferUtils = new FileTransferUtils();
 
         //对上传的文件进行校验
         if (!(UploadTypeEnum.MOVIE_IMAGE.getCode().equals(type) || UploadTypeEnum.USER_ICON_IMAGE.getCode().equals(type))){
@@ -88,7 +89,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                     .fail(messageSource.getMessage("input.type.error.message",null,locale));
         }
 
-        this.setFileInfo(fileInfoBO,type);
+        fileInfoBO = fileTransferUtils.setFileInfo(fileInfoBO,type);
         Integer result = this.checkFile(fileInfoBO);
         if (TYPR_ERROR.equals(result)){
             return new ResponseResult().code(Integer.parseInt(messageSource.getMessage("file.type.error.code",null,locale)))
@@ -141,6 +142,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     public ResponseResult uploadFileZip(MultipartFile[] files, Integer userId, Integer type) {
         //获取当前系统的语言
         Locale locale = LocaleContextHolder.getLocale();
+        FileTransferUtils fileTransferUtils = new FileTransferUtils();
 
         //对上传的文件进行校验
         if (!(UploadTypeEnum.MOVIE_IMAGE.getCode().equals(type) || UploadTypeEnum.USER_ICON_IMAGE.getCode().equals(type))){
@@ -150,7 +152,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         //校验上传的文件的属性
         FileInfoBO fileInfoBO = new FileInfoBO();
         fileInfoBO.setCreateBy(userId);
-        this.setFileInfo(fileInfoBO,type);
+        fileInfoBO = fileTransferUtils.setFileInfo(fileInfoBO,type);
         for (MultipartFile file : files){
             fileInfoBO.setFile(file);
             Integer result = this.checkFile(fileInfoBO);
@@ -227,7 +229,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         String path = fileTruePath;
         String time = DateUtil.getThisDay();
         path = path + SLASH + time + SLASH + fileUuid;
-        if (!insertPath(path)) {
+        if (!FileTransferUtils.insertPath(path)) {
 
         }
 
@@ -273,7 +275,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         String path = fileTruePath;
         String time = DateUtil.getThisDay();
         path = path + SLASH + time + SLASH + fileUuid;
-        if (!insertPath(path)) {
+        if (!FileTransferUtils.insertPath(path)) {
         }
 
         List<Attachment> filesInfo = new ArrayList<>();
@@ -347,51 +349,6 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         return filesInfo;
     }
-
-
-    /**
-     *
-     * @Title: 创建目录
-     * @Description: 创建目录
-     * @param newPath
-     *            创建要上传的文件的目录
-     * @return 是否创建成功
-     */
-    public boolean insertPath(String newPath) {
-        File dir = new File(newPath);
-        if (dir.exists()) {
-            System.out.println("创建目录" + newPath + "失败，目标目录已经存在");
-            return false;
-        }
-        if (!newPath.endsWith(File.separator)) {
-            newPath = newPath + File.separator;
-        }
-        // 创建目录
-        if (dir.mkdirs()) {
-            System.out.println("创建目录" + newPath + "成功！");
-            return true;
-        } else {
-            System.out.println("创建目录" + newPath + "失败！");
-            return false;
-        }
-    }
-
-    public void setFileInfo(FileInfoBO fileInfoBO,Integer type){
-        if (UploadTypeEnum.USER_ICON_IMAGE.equals(type)){
-            fileInfoBO.setFileMaxSize(fileSizeMax);
-            fileInfoBO.setWhiteList(imgWhiteList);
-        } else if (UploadTypeEnum.MOVIE_IMAGE.equals(type)){
-            fileInfoBO.setFileMaxSize(fileSizeMax);
-            fileInfoBO.setWhiteList(imgWhiteList);
-        } else {
-            fileInfoBO.setFileMaxSize(fileSizeMax);
-            fileInfoBO.setWhiteList(defaultWhiteList);
-        }
-
-    }
-
-
-
 
     /*
                                                                                                        .:

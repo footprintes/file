@@ -1,6 +1,14 @@
 package com.nick.file.utils;
 
+import com.nick.file.bo.FileInfoBO;
+import com.nick.file.constant.UploadTypeEnum;
+import com.nick.file.utils.spring.SpringContextHolder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 
 /**
@@ -9,8 +17,24 @@ import org.springframework.web.multipart.MultipartFile;
  * @author: hbj
  * @CreateDate：2018/8/27 19:34
  */
+@Component
 public class FileTransferUtils {
     private static final String DOT = ".";
+
+//    @Value("${file.truepath}")
+//    private String fileTruePath;
+//    @Value("${file.virtualpath}")
+//    private String fileVirtualPath;
+//    @Value("${file.namemaxlength}")
+//    private Integer fileNameMax;
+//    @Value("${file.maxsize}")
+//    private Integer fileSizeMax;
+//    @Value("${file.whitelist.images}")
+//    private String imgWhiteList;
+//    @Value("${file.whitelist.words}")
+//    private String wordWhiteList;
+//    @Value("${file.whitelist.default}")
+//    private String defaultWhiteList;
 
     /**
      *
@@ -83,5 +107,54 @@ public class FileTransferUtils {
             return false;
         }
         return true;
+    }
+
+    /**
+     *
+     * @Title: 创建目录
+     * @Description: 创建目录
+     * @param newPath
+     *            创建要上传的文件的目录
+     * @return 是否创建成功
+     */
+    public static boolean insertPath(String newPath) {
+        File dir = new File(newPath);
+        if (dir.exists()) {
+            System.out.println("创建目录" + newPath + "失败，目标目录已经存在");
+            return false;
+        }
+        if (!newPath.endsWith(File.separator)) {
+            newPath = newPath + File.separator;
+        }
+        // 创建目录
+        if (dir.mkdirs()) {
+            System.out.println("创建目录" + newPath + "成功！");
+            return true;
+        } else {
+            System.out.println("创建目录" + newPath + "失败！");
+            return false;
+        }
+    }
+
+    public FileInfoBO setFileInfo(FileInfoBO fileInfoBO, Integer type){
+        Environment env = SpringContextHolder.getBean(Environment.class);
+        String imgWhiteList = env.getProperty("file.whitelist.images");
+        String defaultWhiteList = env.getProperty("file.whitelist.default");
+        Integer fileSizeMax = Integer.parseInt(env.getProperty("file.maxsize"));
+
+        if (UploadTypeEnum.USER_ICON_IMAGE.equals(type)){
+            fileInfoBO.setFileMaxSize(fileSizeMax);
+            fileInfoBO.setWhiteList(imgWhiteList);
+            return fileInfoBO;
+        }
+        if (UploadTypeEnum.MOVIE_IMAGE.equals(type)){
+            fileInfoBO.setFileMaxSize(fileSizeMax);
+            fileInfoBO.setWhiteList(imgWhiteList);
+            return fileInfoBO;
+        }
+        fileInfoBO.setFileMaxSize(fileSizeMax);
+        fileInfoBO.setWhiteList(defaultWhiteList);
+        return fileInfoBO;
+
     }
 }
