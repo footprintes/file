@@ -1,0 +1,11 @@
+########################### File config ###########################
+
+file:
+  truepath: C://seeu/uploadfile/
+  virtualpath: /uploadfile/
+  maxsize: 10240000
+  namemaxlength: 200
+  whitelist:
+    default: jpg,jpeg,png,bmp,doc,docx,pdf,zip
+    images: jpg,jpeg,png,bmp
+    words: doc,docx,pdf

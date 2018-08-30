@@ -1,0 +1,37 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: file-server
+  profiles:
+    active: config
+########################### database config ###########################
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/file?characterEncoding=utf8&useSSL=true
+    username: root
+    password: Hbj1996
+    driver-class-name: com.mysql.jdbc.Driver
+
+########################### jpa config ###########################
+  jpa:
+    database: mysql
+
+############################ Multipart config ###########################
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+########################### international config ###########################
+  messages:
+    encoding: UTF-8
+    basename: messages
+
+############################ eureka config ###########################
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8080/eureka/
+
