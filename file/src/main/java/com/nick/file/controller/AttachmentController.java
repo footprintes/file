@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping(value = "/attachment/file")
 public class AttachmentController {
+
     @Autowired
     private AttachmentService attachmentService;
 

@@ -392,4 +392,63 @@ public class AttachmentServiceImpl implements AttachmentService {
 
 
 
+
+    /*
+                                                                                                       .:
+                                                                                                       :QB7
+                                                                                                        DBB1Y:
+                                                                                                        rBBv.5J.
+                                                                                                        :MBQ  uPi
+                                                                                                        :RBBj  LR:
+                                                                                                        igBQQ   sB.
+                                                                                                        igBBQ.   Bv
+                                                                                                        7QBBB.   :Ei
+                                                                                                        jBBBB:    Pv
+                                                                                                        PBBQB:    2s.
+                                                                                                        DBQBB.    7u:
+                                                                                                       .QBBBB.    :jr
+                                                                                                       1QBBBQ     :2r
+                                                                                                       QBBBBP     :17
+                                                                                                      :BBBQB7     :2r
+                                                                                                     .gBBBBB.     i1r
+                                                                                                     7BBBBQg      ru:
+                                                                                                    iRBBBBBv      Lj:
+                                                                                                    qBBBBBb.      5J.
+                                                                                                   2BBBBBB7      .Er
+                                                                                                  7BBBBBB2      .Q7
+                                                                                                 iBBBBBQR.     .SI
+                                   ...........                                                  rBBBBBBB.     .5U
+                             .rY2Sq552S2S2SIS5qSIi                                             7BBBQBBB.     :KL
+                          .vqESJr:..         ..iLbPj.                                         YBBBBBBM:     rg7
+                         7ZKr                     :JMX.                                      XBBBBBBI.    .UB:
+                        2Zr                         .PZ:                                   :gBBBBBBi     idd
+                       Jg:                            UPi                                 vBBQBBBI      jgj
+                      :B:                              5d:                              .ZBBQBBD:     :QP:
+                     .XU                               .5E                             sBBBBBBr     .1Bv
+                     rd.                                ig:                          rQBBBBBv      7Zq.
+                     7P                                 .YS                        iQBBBBQL      iMdi
+                    .Jj                                  iD.                     7QBBBQR:      7EMr
+                    :j7                        .P.       .B:             :     vBBBQBd:     :jgP7
+                    iUi          .5i           .E:       .gi           .dBBv:UQBBBBP.    :uZd1.
+                    rUi          iB7                      Z:            sBBBBBBBBs    rXRPs:
+                    i2i           .                       Zdr.           .DBBBB7   LKbUr.
+                    rUi                                   MIJj51v:.      .DBBBQ:isSL:
+                    i2i                                  :Q.  .:r2XSr. rQBQBRBBBP.
+                    :J7                                 .JP         7QBQBBq  iBR:
+                     YP                                 rQ.        7QBBBD:    .
+                    .dBi                               7gL        uBBBBr
+                   :jYrRi                             uR7         .dQP.
+                  :qr  :dY.                        .vgZ:            :
+                 :Qi     uPv                   .iuPgX:
+                rPr       :uPU7::..      .:rJ2X2IBU
+                .:           i7uU5IXKd2ISKSjr:   S:
+                                   .SR.          Xr
+                                    rv           Pi
+                                   :si           bi
+                                   rj:          .gi
+                                   uK.          Y2:
+                                   ri           .
+
+    * */
+
 }
