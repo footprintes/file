@@ -98,6 +98,14 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- pdf转图片 -->
+        <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>1.8.4</version>
+        </dependency>
+        <!-- pdf转图片 -->
 
     </dependencies>
 
