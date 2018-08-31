@@ -5,11 +5,9 @@ import com.nick.file.constant.UploadTypeEnum;
 import com.nick.file.po.Attachment;
 import com.nick.file.repositories.FileRepositories;
 import com.nick.file.service.AttachmentService;
-import com.nick.file.utils.DateUtil;
-import com.nick.file.utils.FileTransferUtils;
-import com.nick.file.utils.ResponseResult;
-import com.nick.file.utils.ZipFileUtil;
+import com.nick.file.utils.*;
 import com.nick.file.vo.AddFileVO;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +21,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -45,6 +45,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     private String fileTruePath;
     @Value("${file.virtualpath}")
     private String fileVirtualPath;
+    @Value("${file.rootpath}")
+    private String fileRootPath;
     @Value("${file.namemaxlength}")
     private Integer fileNameMax;
     @Value("${file.maxsize}")
@@ -64,6 +66,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     private static final String DOT = ".";
     private static final String SLASH = "/";
     private static final String ZIP_PREFIX = "zip";
+
+    static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
 
 
     /**
@@ -183,6 +187,79 @@ public class AttachmentServiceImpl implements AttachmentService {
 
 
         return new ResponseResult().code(200).success(messageSource.getMessage("upload.success.message",null,locale)).data(upload);
+    }
+
+    @Override
+    public ResponseResult uploadFileToPdf(MultipartFile multipartFile, Integer userId, Integer type) {
+        //获取当前的系统语言
+        Locale locale = LocaleContextHolder.getLocale();
+        FileTransferUtils fileTransferUtils = new FileTransferUtils();
+        FileInfoBO fileInfoBO = new FileInfoBO();
+        fileInfoBO.setFile(multipartFile);
+        fileInfoBO.setCreateBy(userId);
+
+//        //对上传的文件进行校验
+//        if (!(UploadTypeEnum.MOVIE_IMAGE.getCode().equals(type) || UploadTypeEnum.USER_ICON_IMAGE.getCode().equals(type))){
+//            return new ResponseResult().code(Integer.parseInt(messageSource.getMessage("input.type.error.code",null,locale)))
+//                    .fail(messageSource.getMessage("input.type.error.message",null,locale));
+//        }
+
+        fileInfoBO = fileTransferUtils.setFileInfo(fileInfoBO,type);
+        Integer result = this.checkFile(fileInfoBO);
+        if (TYPR_ERROR.equals(result)){
+            return new ResponseResult().code(Integer.parseInt(messageSource.getMessage("file.type.error.code",null,locale)))
+                    .fail(messageSource.getMessage("file.type.error.message",null,locale));
+        }
+        if (SIZE_ERROR.equals(result)){
+            return new ResponseResult().code(Integer.parseInt(messageSource.getMessage("file.size.error.code",null,locale)))
+                    .fail(messageSource.getMessage("file.size.error.message",null,locale));
+        }
+        if (NAME_ERROR.equals(result)){
+            return new ResponseResult().code(Integer.parseInt(messageSource.getMessage("file.name.error.code",null,locale)))
+                    .fail(messageSource.getMessage("file.name.error.message",null,locale));
+        }
+        if (null == result || !FILE_OK.equals(result)){
+            return new ResponseResult().code(Integer.parseInt(messageSource.getMessage("file.error.code",null,locale)))
+                    .fail(messageSource.getMessage("file.error.message",null,locale));
+        }
+
+        //上传文件
+        Attachment attachment = this.uploadFile(fileInfoBO.getCreateBy(),fileInfoBO.getFile());
+        if (null == attachment){
+            return new ResponseResult().code(Integer.parseInt(messageSource.getMessage("upload.fail.code",null,locale)))
+                    .fail(messageSource.getMessage("upload.fail.message",null,locale));
+        }
+
+        Attachment saveResult;
+        try {
+            saveResult = fileRepositories.save(attachment);
+        }catch (Exception e){
+            throw new RuntimeException("上传文件失败");
+        }
+
+        boolean isPdf = FileTransferUtils.isPDF(multipartFile);
+        //        目前转成的图片信息全部存储在数据库中，以后考虑存储文件夹信息到数据库中
+        //pdf转图片【开启一个新的线程，异步执行】
+        if (isPdf == true){
+            String pdfPath = fileRootPath + attachment.getPath();
+            try {
+                PDDocument doc = PDDocument.load(pdfPath);
+                int pdfSize = doc.getNumberOfPages();
+                if (pdfSize > 20){
+                    throw new RuntimeException("图片大于20页，上传文件失败");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("上传文件失败");
+            }
+
+            fixedThreadPool.execute(new PdfToImgThread(attachment,this,fileRootPath));
+        }
+        return new ResponseResult().code(200).success(messageSource.getMessage("upload.success.message",null,locale)).data(saveResult);
+    }
+
+    @Override
+    public List<Attachment> insertFileList(List<Attachment> commonAttachFileList) {
+        return fileRepositories.saveAll(commonAttachFileList);
     }
 
     private Integer checkFile(FileInfoBO fileInfoBO){

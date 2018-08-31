@@ -21,24 +21,9 @@ import java.io.File;
 public class FileTransferUtils {
     private static final String DOT = ".";
 
-//    @Value("${file.truepath}")
-//    private String fileTruePath;
-//    @Value("${file.virtualpath}")
-//    private String fileVirtualPath;
-//    @Value("${file.namemaxlength}")
-//    private Integer fileNameMax;
-//    @Value("${file.maxsize}")
-//    private Integer fileSizeMax;
-//    @Value("${file.whitelist.images}")
-//    private String imgWhiteList;
-//    @Value("${file.whitelist.words}")
-//    private String wordWhiteList;
-//    @Value("${file.whitelist.default}")
-//    private String defaultWhiteList;
-
     /**
      *
-     * @Title:  20180725  校验文件类型是否符合要求
+     * @Title:  校验文件类型是否符合要求
      * @Description: 1,
      * @param: [file, whiteList]
      *            description
@@ -63,7 +48,7 @@ public class FileTransferUtils {
 
     /**
      *
-     * @Title:  20180725  校验文件类型是否为PDF
+     * @Title:  校验文件类型是否为PDF
      * @Description: 1,
      * @param: [file, whiteList]
      *            description
@@ -82,7 +67,7 @@ public class FileTransferUtils {
 
     /**
      *
-     * @Title:  20180725 校验文件大小是否超过规定值
+     * @Title:  校验文件大小是否超过规定值
      * @Description: 校验文件大小是否超过规定值
      * @param file 需要检测的文件，maxSize 上传文件允许的最大大小
      * @return 文件是否超过最大值
@@ -97,7 +82,7 @@ public class FileTransferUtils {
 
     /**
      *
-     * @Title:  20180725 校验文件名长度是否超过规定值
+     * @Title:  校验文件名长度是否超过规定值
      * @Description: 校验文件名长度是否超过规定值
      * @param file 需要检测的文件，length 上传文件名允许的最大大小
      * @return 文件名长度是否超过规定值
@@ -136,6 +121,16 @@ public class FileTransferUtils {
         }
     }
 
+    /**
+     *
+     * @Title: 设置文件基本信息
+     * @Description: 1,
+     * @param: [fileInfoBO, type]
+     *            description
+     * @return: com.nick.file.bo.FileInfoBO
+     * @auther: hbj
+     * @date: 2018/8/31 19:17
+     */
     public FileInfoBO setFileInfo(FileInfoBO fileInfoBO, Integer type){
         Environment env = SpringContextHolder.getBean(Environment.class);
         String imgWhiteList = env.getProperty("file.whitelist.images");

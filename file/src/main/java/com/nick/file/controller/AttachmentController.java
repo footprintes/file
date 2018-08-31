@@ -36,4 +36,9 @@ public class AttachmentController {
         ResponseResult responseResult = attachmentService.uploadFileZip(multipartFiles,userId,type);
         return responseResult;
     }
+
+    @PostMapping("/upload/pdf")
+    public ResponseResult uploadFileToPdf(@RequestPart("file") MultipartFile multipartFile, @RequestParam("userId") Integer userId, @RequestParam("type") Integer type){
+        return attachmentService.uploadFileToPdf(multipartFile,userId,type);
+    }
 }

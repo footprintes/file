@@ -1,12 +1,9 @@
-package cnzsqh.supplychain.common.util;
+package com.nick.file.utils;
 
-import cnzsqh.supplychain.common.po.CommonAttachFile;
-import cnzsqh.supplychain.common.service.IUploadFileService;
+import com.nick.file.po.Attachment;
+import com.nick.file.service.AttachmentService;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -33,18 +30,18 @@ public class PdfToImgThread implements Runnable {
 
     private static final String DOT = ".";
 
-    CommonAttachFile commonAttachFile;
+    Attachment attachment;
 
-    IUploadFileService uploadFileService;
+    AttachmentService attachmentService;
 
     @Override
     public void run() {
-        pdfToImgPdfBox(commonAttachFile);
+        pdfToImgPdfBox(attachment);
     }
 
-    public PdfToImgThread(CommonAttachFile commonAttachFile, IUploadFileService uploadFileService,String rootPath){
-        this.commonAttachFile = commonAttachFile;
-        this.uploadFileService = uploadFileService;
+    public PdfToImgThread(Attachment attachment, AttachmentService attachmentService, String rootPath){
+        this.attachment = attachment;
+        this.attachmentService = attachmentService;
         this.rootPath = rootPath;
     }
 
@@ -58,8 +55,8 @@ public class PdfToImgThread implements Runnable {
      * @auther: hbj
      * @date: 2018/7/26 15:27
      */
-    public void pdfToImgPdfBox(CommonAttachFile pdf){
-        List<CommonAttachFile> imgList = new ArrayList<>();
+    public void pdfToImgPdfBox(Attachment pdf){
+        List<Attachment> imgList = new ArrayList<>();
         //pdf的路径
         String pdfPath = rootPath + pdf.getPath();
         String pdfPathInData = pdf.getPath();
@@ -89,22 +86,20 @@ public class PdfToImgThread implements Runnable {
                 ImageIO.write(image,"png",new File(basePath + File.separator + "pdf" +"-" + (i + 1) + ".png"));
                 System.out.println("image in the page ---- " + (i + 1));
 
-                CommonAttachFile commonAttachFile = new CommonAttachFile();
+                Attachment commonAttachFile = new Attachment();
                 commonAttachFile.setId(fileUuid);
                 commonAttachFile.setName(fileUuid + DOT + "png");
                 commonAttachFile.setExt("png");
-//                commonAttachFile.setPath(pdfPathInData + File.separator + "pdf" + "-" + (i + 1) + ".png");
                 commonAttachFile.setPath(pdfPathInData  + "pdf" + "-" + (i + 1) + ".png");
                 commonAttachFile.setCreateBy(pdf.getCreateBy());
-                commonAttachFile.setContractName(pdf.getContractName());
                 commonAttachFile.setUploadFileName(fileUuid + DOT + "png");
-                commonAttachFile.setPdfCount(i + 1);
-                commonAttachFile.setPdfId(pdf.getId());
+                commonAttachFile.setFileCount(i + 1);
+                commonAttachFile.setParentId(pdf.getId());
 
                 imgList.add(commonAttachFile);
             }
             doc.close();
-            uploadFileService.insertFileList(imgList);
+            attachmentService.insertFileList(imgList);
         }catch (Exception e){
             e.printStackTrace();
         }finally {
